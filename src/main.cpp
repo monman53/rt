@@ -5,7 +5,20 @@
 #include "ray.hpp"
 #include "vec.hpp"
 
+template <typename T>
+bool hit_sphere(const Point3<T> &center, T radius, const Ray<T> &r) {
+  Vec3<T> oc = r.o() - center;
+  const auto a = dot(r.d(), r.d());
+  const auto b = T(2.0) * dot(oc, r.d());
+  const auto c = dot(oc, oc) - radius * radius;
+  const auto discriminant = b * b - T(4) * a * c;
+  return discriminant > 0;
+}
+
 template <typename T> Color<T> ray_color(const Ray<T> &r) {
+  if (hit_sphere<T>(Point3<T>(0, 0, -1), 0.5, r)) {
+    return Color<T>(1, 0, 0);
+  }
   Vec3 unit_direction = unit_vector(r.d());
   T t = 0.5 * (unit_direction.y() + 1.0);
   return (T(1.0) - t) * Color<T>(1, 1, 1) + t * Color<T>(0.5, 0.7, 1.0);
